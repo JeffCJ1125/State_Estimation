@@ -39,9 +39,10 @@ R = np.zeros([8, 8])
 R[:4, :4] = np.eye(4) * bad_variance
 R[4:, 4:] = np.eye(4) * good_variance
 
+invR = np.linalg.inv(R)
 # print(f"R = \n {R}")
 
-x_hat = np.linalg.inv(H.T @ H) @ H.T @ y
+x_hat = np.linalg.inv(H.T @ invR @ H) @ H.T @ invR @ y
 print(f"x_hat {x_hat}")
 
 I_line = np.arange(0, 0.8, 0.1).reshape(8, 1)
