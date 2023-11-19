@@ -41,8 +41,10 @@ ef_list.append(X0[1, 0])
 P_list = []
 P_list.append(P0)
 
-std_list = []
-std_list.append(np.sqrt(P_CORVARIANCE))
+p_std_list = []
+p_std_list.append(np.std(rp_list))
+f_std_list = []
+f_std_list.append(np.std(ef_list))
 f_error_list = []
 f_error_list.append(REAL_F - X0[1, 0])
 for i in range(1, 1001):
@@ -79,7 +81,8 @@ for i in range(1, 1001):
 
     f_error_list.append(rf_list[-1] - ef_list[-1])
 
-    std_list.append(np.sqrt(P_k[0, 0]))
+    p_std_list.append(np.std(rp_list))
+    f_std_list.append(np.std(ef_list))
     P_list.append(P_k)
     # print(f"estimate p {ep_list[-1]:.3f} f {ef_list[-1]:.3f}")
     # print(f"true p {rp_list[-1]:.3f} f {rf_list[-1]:.3f}")
@@ -88,27 +91,59 @@ print(len(ep_list))
 # plt.scatter(range(0,11), ep_list)
 # plt.scatter(range(0,11), rp_list, c="red")
 plt.title("Population")
-plt.plot(range(0, len(ep_list)), ep_list)  # '-o' 指定線條和點的風格
-plt.plot(range(0, len(rp_list)), rp_list)
-# plt.grid(True)
+plt.plot(range(0, len(ep_list)), ep_list, '-o',label='Estimate')  # '-o' 指定線條和點的風格
+plt.plot(range(0, len(rp_list)), rp_list, '-o',label='Real')
+plt.legend()
+plt.grid(True)
 plt.show()
 
 # ax2 = plt.gca().twinx()
 plt.title("food supply")
-plt.plot(range(0, len(ef_list)), ef_list, "-o", color="green")
-plt.plot(range(0, len(rf_list)), rf_list, "-o", color="purple")
+plt.plot(range(0, len(ef_list)), ef_list, "-o", color="green",label='Estimate')
+plt.plot(range(0, len(rf_list)), rf_list, "-o", color="purple",label='Real')
+plt.legend()
+plt.grid(True)
+plt.show()
+
+
+plt.title("std of the Population & food supply estimation error")
+plt.plot(range(0, len(p_std_list)), p_std_list, "-o",label='std of the Population')
+# plt.legend()
 # plt.grid(True)
-plt.show()
+ax1 = plt.gca()
+ax1.set_ylabel('std of the food supply')
 
+ax2 = plt.gca().twinx()
+ax2.set_ylabel('food supply estimation error')
+# plt.title("food supplyestimation error")
+ax2.plot(range(0, len(f_error_list)), f_error_list, "-o",color="green", \
+         label='food supply estimation error')
+ms = max(p_std_list)
+mf = max(f_error_list)
+upper_limit = max(ms, mf) * 1.2
+ax1.set_ylim(top=upper_limit)
+ax2.set_ylim(top=upper_limit)
 
-plt.title("standard deviation of the population")
-plt.plot(range(0, len(std_list)), std_list, "-o", color="green")
+handles1, labels1 = ax1.get_legend_handles_labels()
+handles2, labels2 = ax2.get_legend_handles_labels()
+
+handles = handles1 + handles2
+labels = labels1 + labels2
+
+ax2.legend(handles, labels, loc='upper right')
+
+# plt.legend()
 plt.grid(True)
 plt.show()
 
-
-plt.title("food supplyestimation error")
-plt.plot(range(0, len(f_error_list)), f_error_list, "-o", color="green")
+plt.title("std of the food supply estimation error")
+plt.plot(range(0, len(f_std_list)), f_std_list, "-o",label='food supply estimation error')
+# plt.legend()
+# plt.grid(True)
+ax1 = plt.gca()
+ax1.set_ylabel('std of the  food supply estimation error')
+plt.legend()
 plt.grid(True)
 plt.show()
+
 print(np.std(ef_list))
